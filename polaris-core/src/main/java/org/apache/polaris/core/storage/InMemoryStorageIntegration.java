@@ -101,20 +101,8 @@ public abstract class InMemoryStorageIntegration<T extends PolarisStorageConfigu
     Map<String, Map<PolarisStorageActions, ValidationResult>> resultMap = new HashMap<>();
     for (String rawLocation : locations) {
       String location = rawLocation.replace("file:///", "file:/");
-      StringBuilder builder = new StringBuilder();
-      NavigableSet<String> prefixes = allowedLocations;
-      boolean validLocation = false;
-      for (char c : location.toCharArray()) {
-        builder.append(c);
-        prefixes = allowedLocations.tailSet(builder.toString(), true);
-        if (prefixes.isEmpty()) {
-          break;
-        } else if (prefixes.first().equals(builder.toString())) {
-          validLocation = true;
-          break;
-        }
-      }
-      final boolean isValidLocation = validLocation;
+      StorageLocation storageLocation = StorageLocation.of(location);
+      final boolean isValidLocation = storageLocation.isChildOf(allowedLocations);
       Map<PolarisStorageActions, ValidationResult> locationResult =
           actions.stream()
               .collect(

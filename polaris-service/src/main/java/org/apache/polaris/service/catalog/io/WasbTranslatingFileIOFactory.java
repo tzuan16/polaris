@@ -67,9 +67,10 @@ public class WasbTranslatingFileIOFactory implements FileIOFactory {
           scheme = scheme.replaceAll("wasb", "abfs");
         }
         return String.format(
-            "%s://%s@%s.dfs.core.windows.net/%s",
+            "%s://%s@%s.%s/%s",
             scheme,
             azureLocation.getContainer(),
+            azureLocation.getStorageAccount(),
             azureLocation.getEndpoint(),
             azureLocation.getFilePath());
       }

@@ -18,6 +18,7 @@
  */
 package org.apache.polaris.core.storage.azure;
 
+import java.util.NavigableSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.polaris.core.storage.StorageLocation;
@@ -111,6 +112,18 @@ public class AzureLocation extends StorageLocation {
           String slashTerminatedFilePath = ensureTrailingSlash(this.filePath);
           String slashTerminatedParentFilePath = ensureTrailingSlash(potentialAzureParent.filePath);
           return slashTerminatedFilePath.startsWith(slashTerminatedParentFilePath);
+        }
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isChildOf(NavigableSet<String> potentialParents) {
+    for (String parent : potentialParents) {
+      if (isAzureLocation(parent)) {
+        if (isChildOf(new AzureLocation(parent))) {
+          return true;
         }
       }
     }

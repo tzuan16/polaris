@@ -20,6 +20,9 @@ package org.apache.polaris.core.storage;
 
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.NavigableSet;
+import java.util.TreeSet;
+
 import org.apache.polaris.core.storage.azure.AzureLocation;
 
 /** An abstraction over a storage location */
@@ -84,5 +87,24 @@ public class StorageLocation {
       String slashTerminatedParentLocation = ensureTrailingSlash(potentialParent.location);
       return slashTerminatedLocation.startsWith(slashTerminatedParentLocation);
     }
+  }
+
+  public boolean isChildOf(NavigableSet<String> potentialParents) {
+    if (this.location == null || potentialParents == null) {
+      return false;
+    } else {
+      StringBuilder builder = new StringBuilder();
+      NavigableSet<String> prefixes;
+      for (char c : location.toCharArray()) {
+        builder.append(c);
+        prefixes = potentialParents.tailSet(builder.toString(), true);
+        if (prefixes.isEmpty()) {
+          break;
+        } else if (prefixes.first().contentEquals(builder)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
